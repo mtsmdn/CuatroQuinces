@@ -36,48 +36,16 @@
     <h2 id="countdown"></h2>
 
     <script>
-        // Tiempo inicial en segundos
-        let initialTime = {
-            years: 3,
-            months: 11,
-            days: 27,
-            hours: 2,
-            minutes: 37,
-            seconds: 0
-        };
-
-        // Convertir tiempo inicial a segundos
-        let totalSeconds = initialTime.years * 365 * 24 * 3600 +
-                           initialTime.months * 30 * 24 * 3600 +
-                           initialTime.days * 24 * 3600 +
-                           initialTime.hours * 3600 +
-                           initialTime.minutes * 60 +
-                           initialTime.seconds;
-
-        // Variables para el estado del contador
-        let celebrating = false; // Controla si estamos en modo de celebración
-        let celebrationTimer; // Temporizador de la celebración
+        // Tiempo inicial
+        let years = 3;
+        let months = 11;
+        let days = 27;
+        let hours = 2;
+        let minutes = 42;
+        let seconds = 0;
 
         // Función para actualizar el contador
         function updateCountdown() {
-            // Calcular los años, meses, días, horas, minutos y segundos
-            let years = Math.floor(totalSeconds / (365 * 24 * 3600));
-            totalSeconds -= years * 365 * 24 * 3600;
-
-            let months = Math.floor(totalSeconds / (30 * 24 * 3600));
-            totalSeconds -= months * 30 * 24 * 3600;
-
-            let days = Math.floor(totalSeconds / (24 * 3600));
-            totalSeconds -= days * 24 * 3600;
-
-            let hours = Math.floor(totalSeconds / 3600);
-            totalSeconds -= hours * 3600;
-
-            let minutes = Math.floor(totalSeconds / 60);
-            totalSeconds -= minutes * 60;
-
-            let seconds = totalSeconds;
-
             // Mostrar el resultado
             document.getElementById('countdown').innerHTML =
                 years + " años, " +
@@ -88,31 +56,59 @@
                 seconds + " segundos";
 
             // Verificar si se debe mostrar el mensaje especial
-            if (!celebrating && years === 3 && months === 11 && days === 27 && hours === 23 && minutes === 59 && seconds === 59) {
+            if (years === 3 && months === 11 && days === 27 && hours === 23 && minutes === 59 && seconds === 59) {
                 showCelebration();
             }
         }
 
         // Función para mostrar el mensaje de celebración
         function showCelebration() {
-            celebrating = true; // Cambia el estado a celebración
             document.body.style.backgroundColor = "#ffd700"; // Cambiar color de fondo
             document.getElementById('main-title').innerText = "FELICES 4 AÑOS, MUMI HERMOSA";
             document.getElementById('countdown').innerHTML = ""; // Limpiar el contador
 
             // Esperar 15 segundos y luego reiniciar el contador a 4 años
-            celebrationTimer = setTimeout(() => {
-                totalSeconds = 15; // Reiniciar a 4 años y 0 segundos
+            setTimeout(() => {
+                // Reiniciar a 4 años, 0 meses, 0 días, 0 horas, 0 minutos
+                years = 4;
+                months = 0;
+                days = 0;
+                hours = 0;
+                minutes = 0;
+                seconds = 15; // Comenzar desde 15 segundos
                 document.body.style.backgroundColor = "#f0f0f0"; // Restaurar color de fondo
                 document.getElementById('main-title').innerText = "GRACIAS POR PASAR CONMIGO...";
-                celebrating = false; // Cambiar el estado a no celebración
+                updateCountdown(); // Actualizar el contador
             }, 15000);
         }
 
         // Aumentar el contador cada segundo
         setInterval(() => {
-            totalSeconds++;
-            updateCountdown();
+            seconds++; // Aumentar los segundos
+
+            // Controlar el avance del tiempo
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++; // Aumentar los minutos
+            }
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++; // Aumentar las horas
+            }
+            if (hours >= 24) {
+                hours = 0;
+                days++; // Aumentar los días
+            }
+            if (days >= 30) { // Asumimos 30 días para el mes
+                days = 0;
+                months++; // Aumentar los meses
+            }
+            if (months >= 12) { // Asumimos 12 meses para el año
+                months = 0;
+                years++; // Aumentar los años
+            }
+
+            updateCountdown(); // Actualizar el contador
         }, 1000);
 
         // Asegurar que el contador empiece inmediatamente al cargar la página
