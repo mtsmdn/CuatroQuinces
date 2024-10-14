@@ -44,6 +44,18 @@
         let minutes = 42;
         let seconds = 0;
 
+        // Cargar tiempo almacenado desde localStorage
+        const storedTime = localStorage.getItem('timeElapsed');
+        if (storedTime) {
+            const [storedYears, storedMonths, storedDays, storedHours, storedMinutes, storedSeconds] = storedTime.split(',').map(Number);
+            years += storedYears;
+            months += storedMonths;
+            days += storedDays;
+            hours += storedHours;
+            minutes += storedMinutes;
+            seconds += storedSeconds;
+        }
+
         // Función para actualizar el contador
         function updateCountdown() {
             // Mostrar el resultado
@@ -109,6 +121,9 @@
             }
 
             updateCountdown(); // Actualizar el contador
+
+            // Almacenar tiempo acumulado en localStorage
+            localStorage.setItem('timeElapsed', `${years},${months},${days},${hours},${minutes},${seconds}`);
         }, 1000);
 
         // Asegurar que el contador empiece inmediatamente al cargar la página
