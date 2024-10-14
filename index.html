@@ -1,58 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Timer</title>
+    <title>Contador Personalizado</title>
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
             margin: 0;
+            text-align: center;
         }
         h1 {
-            font-size: 3rem;
+            font-size: 2rem;
+            font-weight: bold;
             color: #333;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: #666;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <h1 id="countdown">24:00:00</h1>
+    <h1>Gracias por cada uno de estos años, meses, semanas, días, horas, minutos y segundos que pasé a tu lado</h1>
+    <h2 id="countdown"></h2>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Set the countdown time (24 hours from now)
-            let countdownTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-            let countdownDate = new Date().getTime() + countdownTime;
+        // Configurar la fecha de inicio (15 de octubre de 2020, a las 00:00, horario de España)
+        const startDate = new Date('October 15, 2020 00:00:00').getTime();
 
-            // Update the countdown every 1 second
-            let countdownFunction = setInterval(function() {
-                let now = new Date().getTime();
-                let distance = countdownDate - now;
+        // Función para actualizar el contador
+        function updateCountdown() {
+            const now = new Date().getTime();
+            let distance = now - startDate;
 
-                // Calculate hours, minutes, and seconds
-                let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            // Calcular el tiempo transcurrido en diferentes unidades
+            let years = Math.floor(distance / (1000 * 60 * 60 * 24 * 365.25));
+            distance -= years * 1000 * 60 * 60 * 24 * 365.25;
 
-                // Display the result in the element with id="countdown"
-                document.getElementById("countdown").innerHTML = 
-                    (hours < 10 ? "0" + hours : hours) + ":" +
-                    (minutes < 10 ? "0" + minutes : minutes) + ":" +
-                    (seconds < 10 ? "0" + seconds : seconds);
+            let months = Math.floor(distance / (1000 * 60 * 60 * 24 * 30.44));
+            distance -= months * 1000 * 60 * 60 * 24 * 30.44;
 
-                // If the countdown is finished, display "EXPIRED"
-                if (distance < 0) {
-                    clearInterval(countdownFunction);
-                    document.getElementById("countdown").innerHTML = "EXPIRED";
-                }
-            }, 1000);
-        });
+            let weeks = Math.floor(distance / (1000 * 60 * 60 * 24 * 7));
+            distance -= weeks * 1000 * 60 * 60 * 24 * 7;
+
+            let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            distance -= days * 1000 * 60 * 60 * 24;
+
+            let hours = Math.floor(distance / (1000 * 60 * 60));
+            distance -= hours * 1000 * 60 * 60;
+
+            let minutes = Math.floor(distance / (1000 * 60));
+            distance -= minutes * 1000 * 60;
+
+            let seconds = Math.floor(distance / 1000);
+
+            // Mostrar el resultado
+            document.getElementById('countdown').innerHTML =
+                years + " años, " +
+                months + " meses, " +
+                weeks + " semanas, " +
+                days + " días, " +
+                hours + " horas, " +
+                minutes + " minutos, " +
+                seconds + " segundos";
+        }
+
+        // Actualizar el contador cada segundo
+        setInterval(updateCountdown, 1000);
+
+        // Asegurar que el contador empiece inmediatamente al cargar la página
+        updateCountdown();
     </script>
 </body>
 </html>
