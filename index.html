@@ -47,13 +47,13 @@
     </p>
 
     <script>
-        // Tiempo inicial en segundos (3 años, 11 meses, 27 días, 3 horas, 18 minutos)
-        const initialTime = (3 * 365 * 24 * 60 * 60) + (11 * 30 * 24 * 60 * 60) + (27 * 24 * 60 * 60) + (3 * 60 * 60) + (18 * 60);
+        // Calcular los segundos correspondientes a 3 años, 11 meses, 27 días, 3 horas y 18 minutos
+        const initialTimeInSeconds = (3 * 365 * 24 * 60 * 60) + (11 * 30 * 24 * 60 * 60) + (27 * 24 * 60 * 60) + (3 * 60 * 60) + (18 * 60);
 
         // Guardar la hora de inicio en localStorage si no existe
         if (!localStorage.getItem('startTime')) {
             const now = Math.floor(Date.now() / 1000); // Obtener tiempo actual en segundos
-            localStorage.setItem('startTime', now - initialTime); // Establecer el tiempo de inicio
+            localStorage.setItem('startTime', now - initialTimeInSeconds); // Establecer el tiempo de inicio
         }
 
         // Obtener el tiempo de inicio
