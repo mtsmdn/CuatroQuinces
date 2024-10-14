@@ -2,101 +2,104 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador de Aniversario</title>
+    <title>Contador</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            text-align: center;
-            transition: background-color 0.5s ease;
-        }
-        h1 {
-            font-size: 2rem;
-            font-weight: bold;
+            background-color: #fff;
             color: #333;
-            margin: 0;
+            position: relative;
         }
-        h2 {
-            font-size: 1.5rem;
-            color: #666;
-            margin-top: 10px;
+
+        #counter {
+            font-size: 2rem;
+        }
+
+        #message {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            color: white;
+            font-size: 3rem;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <h1 id="main-title">GRACIAS POR PASAR CONMIGO...</h1>
-    <h2 id="countdown"></h2>
+    <div id="counter"></div>
+    <div id="message">FELICES 4 AÑOS, MUMI PRECIOSA</div>
 
     <script>
         // Tiempo inicial en segundos
-        const initialTime = (3 * 365 * 24 * 60 * 60) + (11 * 30 * 24 * 60 * 60) + (27 * 24 * 60 * 60) + (2 * 60 * 60) + (42 * 60);
+        let initialTime = {
+            years: 3,
+            months: 11,
+            days: 27,
+            hours: 3,
+            minutes: 38,
+            seconds: 0
+        };
 
-        // Guardar la hora de inicio en localStorage si no existe
-        if (!localStorage.getItem('startTime')) {
-            const now = Math.floor(Date.now() / 1000); // Obtener tiempo actual en segundos
-            localStorage.setItem('startTime', now - initialTime); // Establecer el tiempo de inicio
+        // Calcular tiempo total en segundos
+        function getTotalSeconds() {
+            const monthsToDays = initialTime.months * 30; // Aproximación
+            const totalDays = initialTime.days + monthsToDays;
+            const totalHours = totalDays * 24 + initialTime.hours;
+            const totalMinutes = totalHours * 60 + initialTime.minutes;
+            return totalMinutes * 60 + initialTime.seconds;
         }
 
-        // Obtener el tiempo de inicio
-        const startTime = parseInt(localStorage.getItem('startTime'));
+        // Cargar tiempo desde localStorage o iniciar
+        let storedTime = localStorage.getItem('counterTime');
+        let totalSeconds = storedTime ? parseInt(storedTime, 10) : getTotalSeconds();
+        
+        // Actualizar el contador en la pantalla
+        const updateCounter = () => {
+            const days = Math.floor(totalSeconds / (24 * 3600));
+            const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            document.getElementById('counter').innerText = `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+        };
 
-        // Función para actualizar el contador
-        function updateCountdown() {
-            const currentTime = Math.floor(Date.now() / 1000); // Obtener tiempo actual
-            const elapsedSeconds = currentTime - startTime; // Calcular los segundos transcurridos
+        // Función para manejar el tiempo
+        const startCounter = () => {
+            totalSeconds++;
+            localStorage.setItem('counterTime', totalSeconds);
+            updateCounter();
 
-            const years = Math.floor(elapsedSeconds / (365 * 24 * 60 * 60));
-            const months = Math.floor((elapsedSeconds % (365 * 24 * 60 * 60)) / (30 * 24 * 60 * 60));
-            const days = Math.floor((elapsedSeconds % (30 * 24 * 60 * 60)) / (24 * 60 * 60));
-            const hours = Math.floor((elapsedSeconds % (24 * 60 * 60)) / (60 * 60));
-            const minutes = Math.floor((elapsedSeconds % (60 * 60)) / 60);
-            const seconds = elapsedSeconds % 60;
-
-            // Mostrar el resultado
-            document.getElementById('countdown').innerHTML =
-                years + " años, " +
-                months + " meses, " +
-                days + " días, " +
-                hours + " horas, " +
-                minutes + " minutos, " +
-                seconds + " segundos";
-
-            // Verificar si se debe mostrar el mensaje especial
-            if (years === 3 && months === 11 && days === 27 && hours === 23 && minutes === 59 && seconds === 59) {
-                showCelebration();
+            // Comprobar si se debe mostrar el mensaje
+            if (totalSeconds === getTotalSeconds() + 86400 - 1) { // 86400 es el total de segundos en un día
+                showMessage();
             }
-        }
+        };
 
-        // Función para mostrar el mensaje de celebración
-        function showCelebration() {
-            document.body.style.backgroundColor = "#ffd700"; // Cambiar color de fondo
-            document.getElementById('main-title').innerText = "FELICES 4 AÑOS, MUMI HERMOSA";
-            document.getElementById('countdown').innerHTML = ""; // Limpiar el contador
-
-            // Esperar 15 segundos y luego reiniciar el contador a 4 años
+        // Mostrar mensaje y ocultar contador
+        const showMessage = () => {
+            document.getElementById('counter').style.display = 'none';
+            document.getElementById('message').style.display = 'flex';
             setTimeout(() => {
-                // Reiniciar a 4 años, 0 meses, 0 días, 0 horas, 0 minutos
-                const currentTime = Math.floor(Date.now() / 1000); // Obtener tiempo actual en segundos
-                localStorage.setItem('startTime', currentTime - 15); // Establecer tiempo de inicio a 15 segundos
-                document.body.style.backgroundColor = "#f0f0f0"; // Restaurar color de fondo
-                document.getElementById('main-title').innerText = "GRACIAS POR PASAR CONMIGO...";
-                updateCountdown(); // Actualizar el contador
-            }, 15000);
-        }
+                document.getElementById('message').style.display = 'none';
+                document.getElementById('counter').style.display = 'block';
+                totalSeconds += 15; // Sumar 15 segundos para continuar el conteo
+            }, 15000); // 15000 milisegundos = 15 segundos
+        };
 
-        // Actualizar el contador inicialmente
-        updateCountdown();
-
-        // Aumentar el contador cada segundo
-        setInterval(updateCountdown, 1000);
+        // Iniciar el contador cada segundo
+        setInterval(startCounter, 1000);
+        updateCounter();
     </script>
 </body>
 </html>
