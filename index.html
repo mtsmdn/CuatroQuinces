@@ -30,16 +30,25 @@
     </style>
 </head>
 <body>
-    <h1>Gracias por cada uno de estos años, meses, semanas, días, horas, minutos y segundos que pasé a tu lado</h1>
+    <h1>GRACIAS POR CADA UNO DE ESTOS años, meses, semanas, días, horas, minutos y segundos QUE PASÉ A TU LADO. TE AMO, MUMI.</h1>
     <h2 id="countdown"></h2>
 
     <script>
         // Configurar la fecha de inicio (15 de octubre de 2020, a las 00:00, horario de España)
-        const startDate = new Date('October 15, 2020 00:00:00').getTime();
+        // Se incluye la corrección para el huso horario de España (CET/CEST)
+        const startDate = new Date(Date.UTC(2020, 9, 15, 0, 0, 0)); // Mes 9 es octubre (0 indexado)
+        
+        // Función para obtener la hora de España
+        function getCurrentTimeInSpain() {
+            // Crear una fecha actual en UTC y luego convertirla a la zona horaria de España (CET/CEST)
+            const now = new Date();
+            const spainTimeOffset = 2 * 60; // España está en UTC+2 durante el horario de verano (CEST)
+            return new Date(now.getTime() + (spainTimeOffset * 60 * 1000));
+        }
 
         // Función para actualizar el contador
         function updateCountdown() {
-            const now = new Date().getTime();
+            const now = getCurrentTimeInSpain().getTime();
             let distance = now - startDate;
 
             // Calcular el tiempo transcurrido en diferentes unidades
