@@ -13,11 +13,46 @@
             height: 100vh;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
+            margin: 0;
         }
         h1 {
             font-size: 3rem;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <h1 i
+    <h1 id="countdown">24:00:00</h1>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set the countdown time (24 hours from now)
+            let countdownTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            let countdownDate = new Date().getTime() + countdownTime;
+
+            // Update the countdown every 1 second
+            let countdownFunction = setInterval(function() {
+                let now = new Date().getTime();
+                let distance = countdownDate - now;
+
+                // Calculate hours, minutes, and seconds
+                let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the result in the element with id="countdown"
+                document.getElementById("countdown").innerHTML = 
+                    (hours < 10 ? "0" + hours : hours) + ":" +
+                    (minutes < 10 ? "0" + minutes : minutes) + ":" +
+                    (seconds < 10 ? "0" + seconds : seconds);
+
+                // If the countdown is finished, display "EXPIRED"
+                if (distance < 0) {
+                    clearInterval(countdownFunction);
+                    document.getElementById("countdown").innerHTML = "EXPIRED";
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
