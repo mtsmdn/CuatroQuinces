@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador Personalizado</title>
+    <title>Contador de Aniversario</title>
     <style>
         body {
             display: flex;
@@ -16,66 +16,101 @@
             font-family: Arial, sans-serif;
             margin: 0;
             text-align: center;
+            transition: background-color 0.5s ease;
         }
         h1 {
             font-size: 2rem;
             font-weight: bold;
             color: #333;
+            margin: 0;
         }
         h2 {
             font-size: 1.5rem;
             color: #666;
             margin-top: 10px;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Gracias por cada uno de estos años, meses, semanas, días, horas, minutos y segundos que pasé a tu lado</h1>
+    <h1 id="main-title">GRACIAS POR PASAR CONMIGO...</h1>
     <h2 id="countdown"></h2>
 
     <script>
-        // Configurar la fecha de inicio (15 de octubre de 2020, a las 00:00, horario de España)
-        const startDate = new Date('2020-10-15T00:00:00+02:00'); // Hora de España en horario de verano (CEST)
+        // Tiempo inicial en segundos
+        let initialTime = {
+            years: 3,
+            months: 11,
+            days: 27,
+            hours: 2,
+            minutes: 26,
+            seconds: 0
+        };
+
+        // Convertir todo a segundos
+        let totalSeconds = initialTime.years * 365 * 24 * 3600 +
+                           initialTime.months * 30 * 24 * 3600 +
+                           initialTime.days * 24 * 3600 +
+                           initialTime.hours * 3600 +
+                           initialTime.minutes * 60 +
+                           initialTime.seconds;
 
         // Función para actualizar el contador
         function updateCountdown() {
-            const now = new Date(); // Obtener la hora actual (ajustada automáticamente al huso horario local)
-            let distance = now - startDate;
+            // Calcular los años, meses, días, horas, minutos y segundos
+            let years = Math.floor(totalSeconds / (365 * 24 * 3600));
+            totalSeconds -= years * 365 * 24 * 3600;
 
-            // Calcular el tiempo transcurrido en diferentes unidades
-            let years = Math.floor(distance / (1000 * 60 * 60 * 24 * 365.25));
-            distance -= years * 1000 * 60 * 60 * 24 * 365.25;
+            let months = Math.floor(totalSeconds / (30 * 24 * 3600));
+            totalSeconds -= months * 30 * 24 * 3600;
 
-            let months = Math.floor(distance / (1000 * 60 * 60 * 24 * 30.44));
-            distance -= months * 1000 * 60 * 60 * 24 * 30.44;
+            let days = Math.floor(totalSeconds / (24 * 3600));
+            totalSeconds -= days * 24 * 3600;
 
-            let weeks = Math.floor(distance / (1000 * 60 * 60 * 24 * 7));
-            distance -= weeks * 1000 * 60 * 60 * 24 * 7;
+            let hours = Math.floor(totalSeconds / 3600);
+            totalSeconds -= hours * 3600;
 
-            let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            distance -= days * 1000 * 60 * 60 * 24;
+            let minutes = Math.floor(totalSeconds / 60);
+            totalSeconds -= minutes * 60;
 
-            let hours = Math.floor(distance / (1000 * 60 * 60));
-            distance -= hours * 1000 * 60 * 60;
-
-            let minutes = Math.floor(distance / (1000 * 60));
-            distance -= minutes * 1000 * 60;
-
-            let seconds = Math.floor(distance / 1000);
+            let seconds = totalSeconds;
 
             // Mostrar el resultado
             document.getElementById('countdown').innerHTML =
                 years + " años, " +
                 months + " meses, " +
-                weeks + " semanas, " +
                 days + " días, " +
                 hours + " horas, " +
                 minutes + " minutos, " +
                 seconds + " segundos";
+
+            // Verificar si se debe mostrar el mensaje especial
+            if (years === 3 && months === 11 && days === 27 && hours === 23 && minutes === 59 && seconds === 59) {
+                showCelebration();
+            }
         }
 
-        // Actualizar el contador cada segundo
-        setInterval(updateCountdown, 1000);
+        // Función para mostrar el mensaje de celebración
+        function showCelebration() {
+            document.body.style.backgroundColor = "#ffd700"; // Cambiar color de fondo
+            document.getElementById('main-title').innerText = "FELICES 4 AÑOS, MUMI HERMOSA";
+            document.getElementById('countdown').innerHTML = ""; // Limpiar el contador
+
+            // Esperar 15 segundos y luego reiniciar el contador
+            setTimeout(() => {
+                totalSeconds = 15; // Reiniciar a 4 años y 0 segundos
+                document.body.style.backgroundColor = "#f0f0f0"; // Restaurar color de fondo
+                document.getElementById('main-title').innerText = "GRACIAS POR PASAR CONMIGO...";
+            }, 15000);
+        }
+
+        // Aumentar el contador cada segundo
+        setInterval(() => {
+            totalSeconds++;
+            updateCountdown();
+        }, 1000);
 
         // Asegurar que el contador empiece inmediatamente al cargar la página
         updateCountdown();
