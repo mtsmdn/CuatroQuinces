@@ -36,28 +36,19 @@
     <h2 id="countdown"></h2>
 
     <script>
-        // Tiempo inicial
-        let years = 3;
-        let months = 11;
-        let days = 27;
-        let hours = 2;
-        let minutes = 42;
-        let seconds = 0;
-
-        // Cargar tiempo almacenado desde localStorage
-        const storedTime = localStorage.getItem('timeElapsed');
-        if (storedTime) {
-            const [storedYears, storedMonths, storedDays, storedHours, storedMinutes, storedSeconds] = storedTime.split(',').map(Number);
-            years += storedYears;
-            months += storedMonths;
-            days += storedDays;
-            hours += storedHours;
-            minutes += storedMinutes;
-            seconds += storedSeconds;
-        }
+        // Tiempo inicial en segundos
+        const initialTime = (3 * 365 * 24 * 60 * 60) + (11 * 30 * 24 * 60 * 60) + (27 * 24 * 60 * 60) + (2 * 60 * 60) + (42 * 60);
+        let elapsedSeconds = localStorage.getItem('elapsedSeconds') ? parseInt(localStorage.getItem('elapsedSeconds')) : initialTime;
 
         // Función para actualizar el contador
         function updateCountdown() {
+            const years = Math.floor(elapsedSeconds / (365 * 24 * 60 * 60));
+            const months = Math.floor((elapsedSeconds % (365 * 24 * 60 * 60)) / (30 * 24 * 60 * 60));
+            const days = Math.floor((elapsedSeconds % (30 * 24 * 60 * 60)) / (24 * 60 * 60));
+            const hours = Math.floor((elapsedSeconds % (24 * 60 * 60)) / (60 * 60));
+            const minutes = Math.floor((elapsedSeconds % (60 * 60)) / 60);
+            const seconds = elapsedSeconds % 60;
+
             // Mostrar el resultado
             document.getElementById('countdown').innerHTML =
                 years + " años, " +
@@ -82,12 +73,7 @@
             // Esperar 15 segundos y luego reiniciar el contador a 4 años
             setTimeout(() => {
                 // Reiniciar a 4 años, 0 meses, 0 días, 0 horas, 0 minutos
-                years = 4;
-                months = 0;
-                days = 0;
-                hours = 0;
-                minutes = 0;
-                seconds = 15; // Comenzar desde 15 segundos
+                elapsedSeconds = 15; // Comenzar desde 15 segundos
                 document.body.style.backgroundColor = "#f0f0f0"; // Restaurar color de fondo
                 document.getElementById('main-title').innerText = "GRACIAS POR PASAR CONMIGO...";
                 updateCountdown(); // Actualizar el contador
@@ -96,34 +82,11 @@
 
         // Aumentar el contador cada segundo
         setInterval(() => {
-            seconds++; // Aumentar los segundos
-
-            // Controlar el avance del tiempo
-            if (seconds >= 60) {
-                seconds = 0;
-                minutes++; // Aumentar los minutos
-            }
-            if (minutes >= 60) {
-                minutes = 0;
-                hours++; // Aumentar las horas
-            }
-            if (hours >= 24) {
-                hours = 0;
-                days++; // Aumentar los días
-            }
-            if (days >= 30) { // Asumimos 30 días para el mes
-                days = 0;
-                months++; // Aumentar los meses
-            }
-            if (months >= 12) { // Asumimos 12 meses para el año
-                months = 0;
-                years++; // Aumentar los años
-            }
-
-            updateCountdown(); // Actualizar el contador
+            elapsedSeconds++; // Aumentar los segundos
 
             // Almacenar tiempo acumulado en localStorage
-            localStorage.setItem('timeElapsed', `${years},${months},${days},${hours},${minutes},${seconds}`);
+            localStorage.setItem('elapsedSeconds', elapsedSeconds);
+            updateCountdown(); // Actualizar el contador
         }, 1000);
 
         // Asegurar que el contador empiece inmediatamente al cargar la página
